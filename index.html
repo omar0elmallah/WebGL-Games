@@ -1,29 +1,227 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لعبتي</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: #1a1a1a;
-    }
-    iframe {
-      border: none;
-      width: 800px;   /* حجم اللعبة */
-      height: 600px;  /* حجم اللعبة */
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة ألعاب ويب - WebGL Console</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- غير game.html باسم ملف لعبتك -->
-  <iframe src="game.html"></iframe>
+    <!-- شريط التنقل -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>منصة الألعاب</h2>
+            </div>
+            <div class="nav-menu">
+                <a href="#" class="nav-link active" data-page="home">الرئيسية</a>
+                <a href="#" class="nav-link" data-page="store">المتجر</a>
+                <a href="#" class="nav-link" data-page="library">مكتبتي</a>
+                <a href="#" class="nav-link" data-page="profile">الملف الشخصي</a>
+            </div>
+            <div class="nav-user">
+                <span id="user-greeting">مرحبًا، ضيف</span>
+                <button id="theme-toggle" class="btn-secondary">تبديل الثيم</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
+        <!-- الصفحة الرئيسية -->
+        <section id="home-page" class="page active">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h1>مرحبًا بك في منصة الألعاب</h1>
+                    <p>استمتع بتجربة كونسول ألعاب ويب متكامل مع متجر ومكتبة شخصية</p>
+                    <div class="hero-actions">
+                        <button class="btn-primary" data-page="store">استكشف المتجر</button>
+                        <button class="btn-secondary" id="quick-play">تشغيل سريع</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="featured-games">
+                <h2>الألعاب المميزة</h2>
+                <div class="games-grid" id="featured-games-grid">
+                    <!-- سيتم تعبئتها بالجافاسكريبت -->
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <div class="stat-card">
+                    <h3>عدد الألعاب</h3>
+                    <p id="total-games">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>وقت اللعب</h3>
+                    <p id="total-playtime">0 ساعة</p>
+                </div>
+                <div class="stat-card">
+                    <h3>المستخدمون النشطون</h3>
+                    <p id="active-users">0</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- صفحة المتجر -->
+        <section id="store-page" class="page">
+            <div class="page-header">
+                <h1>متجر الألعاب</h1>
+                <div class="store-controls">
+                    <input type="text" id="search-games" placeholder="ابحث عن لعبة...">
+                    <select id="filter-category">
+                        <option value="">جميع الفئات</option>
+                        <option value="action">أكشن</option>
+                        <option value="adventure">مغامرة</option>
+                        <option value="puzzle">ألغاز</option>
+                        <option value="sports">رياضة</option>
+                    </select>
+                    <select id="sort-games">
+                        <option value="popular">الأكثر شيوعًا</option>
+                        <option value="newest">الأحدث</option>
+                        <option value="name">حسب الاسم</option>
+                    </select>
+                </div>
+            </div>
+            <div class="games-grid" id="store-games-grid">
+                <!-- سيتم تعبئتها بالجافاسكريبت -->
+            </div>
+        </section>
+
+        <!-- صفحة المكتبة -->
+        <section id="library-page" class="page">
+            <div class="page-header">
+                <h1>مكتبتي</h1>
+                <p>الألعاب التي أضفتها إلى مكتبتك الشخصية</p>
+            </div>
+            <div class="library-stats">
+                <div class="stat-item">
+                    <span>عدد الألعاب:</span>
+                    <strong id="library-count">0</strong>
+                </div>
+                <div class="stat-item">
+                    <span>آخر لعبة:</span>
+                    <strong id="last-played">-</strong>
+                </div>
+            </div>
+            <div class="games-grid" id="library-games-grid">
+                <!-- سيتم تعبئتها بالجافاسكريبت -->
+            </div>
+        </section>
+
+        <!-- صفحة الملف الشخصي -->
+        <section id="profile-page" class="page">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <div class="avatar">ض</div>
+                </div>
+                <div class="profile-info">
+                    <h1 id="profile-username">ضيف</h1>
+                    <p id="profile-userid">معرف المستخدم: </p>
+                    <div class="profile-stats">
+                        <div class="stat">
+                            <span>وقت اللعب الكلي</span>
+                            <strong id="profile-playtime">0 ساعة</strong>
+                        </div>
+                        <div class="stat">
+                            <span>عدد الألعاب</span>
+                            <strong id="profile-games">0</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-settings">
+                <h2>الإعدادات</h2>
+                <div class="setting-item">
+                    <label for="theme-select">الثيم:</label>
+                    <select id="theme-select">
+                        <option value="dark">داكن</option>
+                        <option value="light">فاتح</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label for="volume-slider">الصوت:</label>
+                    <input type="range" id="volume-slider" min="0" max="100" value="80">
+                </div>
+                <button class="btn-secondary" id="clear-data">مسح البيانات المحلية</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- مشغل الألعاب -->
+    <div id="game-player" class="game-player hidden">
+        <div class="player-header">
+            <h3 id="game-title">اسم اللعبة</h3>
+            <button id="close-game" class="btn-close">✕</button>
+        </div>
+        <div class="player-content">
+            <div id="game-container">
+                <div class="game-placeholder">
+                    <p>سيتم تحميل اللعبة هنا</p>
+                    <p>هذا نموذج توضيحي - في التطبيق الحقيقي سيتم تحميل WebGL</p>
+                    <button class="btn-primary" id="simulate-play">محاكاة اللعب</button>
+                </div>
+            </div>
+            <div class="player-controls">
+                <button class="btn-secondary" id="fullscreen-toggle">ملء الشاشة</button>
+                <button class="btn-secondary" id="save-game">حفظ</button>
+                <button class="btn-secondary" id="load-game">تحميل</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تفاصيل اللعبة -->
+    <div id="game-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-game-title">اسم اللعبة</h3>
+                <button id="close-modal" class="btn-close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="game-details">
+                    <div class="game-media">
+                        <img id="modal-game-image" src="" alt="صورة اللعبة">
+                    </div>
+                    <div class="game-info">
+                        <p id="modal-game-description">وصف اللعبة</p>
+                        <div class="game-meta">
+                            <span id="modal-game-category">الفئة: </span>
+                            <span id="modal-game-size">الحجم: </span>
+                            <span id="modal-game-players">اللاعبون: </span>
+                        </div>
+                        <div class="game-actions">
+                            <button class="btn-primary" id="play-game">تشغيل</button>
+                            <button class="btn-secondary" id="add-to-library">إضافة إلى المكتبة</button>
+                            <button class="btn-secondary" id="download-game">تحميل</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- التذييل -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2023 منصة ألعاب ويب. جميع الحقوق محفوظة.</p>
+            <div class="footer-links">
+                <a href="#">سياسة الخصوصية</a>
+                <a href="#">شروط الاستخدام</a>
+                <a href="#">اتصل بنا</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- تحميل المكتبات والبرامج النصية -->
+    <script src="js/auth.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/library.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/app.js"></script>
 </body>
-</html>
+</html>v
