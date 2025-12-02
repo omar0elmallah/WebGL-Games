@@ -95,7 +95,23 @@ class StoreManager {
                     rating: 4.0,
                     isFeatured: false,
                     webglUrl: '#'
+                },
+                {
+                    id: 'simple-runner',
+                    title: 'لعبة الجري السريعة',
+                    description: 'اجري وتجنب العوائق وحقق أعلى النقاط!',
+                    category: 'action',
+                    image: 'https://via.placeholder.com/300x150/3498db/ffffff?text=🏃+لعبة+الجري',
+                    size: '2 MB',
+                    players: '1',
+                    rating: 4.3,
+                    isFeatured: true,
+                    localPath: 'simple-game',  // اسم المجلد
+                    type: 'webgl'
                 }
+
+                
+                
             ];
             
             this.filteredGames = [...this.games];
@@ -331,3 +347,36 @@ class StoreManager {
 
 // إنشاء نسخة عامة من مدير المتجر
 const storeManager = new StoreManager();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// في store.js داخل loadGames() أضف:
