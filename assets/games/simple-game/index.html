@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>لعبة جري بسيطة</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(#87CEEB, #E0F6FF);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #gameCanvas {
+            border: 4px solid #333;
+            background: #fff;
+        }
+        .instructions {
+            position: absolute;
+            top: 20px;
+            font-family: Arial;
+            color: #333;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="instructions">
+        <h2>🏃 لعبة الجري</h2>
+        <p>اضغط زر المسافة للقفز | ⬅️ ➡️ للتحرك</p>
+        <p id="score">النقاط: 0</p>
+    </div>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+    <script>
+        // لعبة جري بسيطة
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+
+        let player = {
+            x: 50,
+            y: 250,
+            width: 40,
+            height: 60,
+            speed: 5,
+            jumping: false,
+            velocityY: 0,
+            color: '#3498db'
+        };
+
+        let obstacles = [];
+        let score = 0;
+        let gameRunning = true;
+
+        // إنشاء عقبات
+        function createObstacle() {
+            obstacles.push({
+                x: 800,
+                y: 280,
+                width: 30,
+                height: 40,
+                color: '#e74c3c'
+            });
+        }
+
+        // رسم اللاعب
+        function drawPlayer() {
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            
+            // رسم العيون
+            ctx.fillStyle = 'white';
+            ctx.fillRect(player.x + 25, player.y + 10, 8, 8);
+            ctx.fillRect(player.x + 10, player.y + 10, 8, 8);
+            
+            // رسم الفم
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(player.x + 15, player.y + 30, 15, 5);
+        }
+
+        // رسم العقبات
+        function drawObstacles() {
+            obstacles.forEach(obstacle => {
+                ctx.fillStyle = obstacle.color;
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            });
+        }
+
+        // تحديث اللعبة
+        function update() {
+            if (!gameRunning) return;
+
+            // حركة العقبات
+            obstacles.forEach((obstacle, index) => {
+                obstacle.x -= 5;
+                
+                // إزالة العقبات التي خرجت من الشاشة
+                if (obstacle.x < -obstacle.width) {
+                    obstacles.splice(index, 1);
+                    score += 10;
+                    scoreElement.textContent = `النقاط: ${score}`;
+                }
+                
+                // كشف الاصطدام
+                if (player.x < obstacle.x + obstacle.width &&
+                    player.x + player.width > obstacle.x &&
+                    player.y < obstacle.y + obstacle.height &&
+                    player.y + player.height > obstacle.y) {
+                    gameOver();
+                }
+            });
+
+            // الجاذبية
+            if (!player.jumping) {
+                player.velocityY += 0.5;
+            } else {
+                player.velocityY -= 0.5;
+                if (player.velocityY <= 0) {
+                    player.jumping = false;
+                }
+            }
+
+            player.y += player.velocityY;
+
+            // التأكد أن اللاعب على الأرض
+            if (player.y > 250) {
+                player.y = 250;
+                player.velocityY = 0;
+            }
+
+            // إنشاء عقبات عشوائية
+            if (Math.random() < 0.02) {
+                createObstacle();
+            }
+        }
+
+        // رسم الخلفية
+        function drawBackground() {
+            // السماء
+            ctx.fillStyle = '#87CEEB';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // الأرض
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(0, 290, canvas.width, 110);
+            
+            // العشب
+            ctx.fillStyle = '#2ECC71';
+            ctx.fillRect(0, 290, canvas.width, 10);
+            
+            // سحابة
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(200, 100, 30, 0, Math.PI * 2);
+            ctx.arc(230, 90, 40, 0, Math.PI * 2);
+            ctx.arc(260, 100, 30, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // رسم كل شيء
+        function draw() {
+            drawBackground();
+            drawPlayer();
+            drawObstacles();
+        }
+
+        // انتهاء اللعبة
+        function gameOver() {
+            gameRunning = false;
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 48px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('انتهت اللعبة!', canvas.width/2, canvas.height/2 - 50);
+            
+            ctx.font = '36px Arial';
+            ctx.fillText(`النتيجة: ${score}`, canvas.width/2, canvas.height/2 + 20);
+            
+            ctx.font = '24px Arial';
+            ctx.fillText('اضغط R لإعادة اللعب', canvas.width/2, canvas.height/2 + 80);
+        }
+
+        // لوحة التحكم
+        const keys = {};
+        window.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+            
+            if (e.key === ' ') {
+                // قفز
+                if (!player.jumping && player.y === 250) {
+                    player.jumping = true;
+                    player.velocityY = 15;
+                }
+            }
+            
+            if (e.key === 'r' || e.key === 'R') {
+                // إعادة اللعبة
+                if (!gameRunning) {
+                    player = { x: 50, y: 250, width: 40, height: 60, speed: 5, jumping: false, velocityY: 0, color: '#3498db' };
+                    obstacles = [];
+                    score = 0;
+                    gameRunning = true;
+                    scoreElement.textContent = `النقاط: 0`;
+                }
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+
+        // دورة اللعبة
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // التحكم بالمفاتيح
+        function handleKeys() {
+            if (keys['ArrowRight'] || keys['d'] || keys['D']) {
+                player.x += player.speed;
+                if (player.x > canvas.width - player.width) {
+                    player.x = canvas.width - player.width;
+                }
+            }
+            
+            if (keys['ArrowLeft'] || keys['a'] || keys['A']) {
+                player.x -= player.speed;
+                if (player.x < 0) {
+                    player.x = 0;
+                }
+            }
+        }
+
+        // بدء اللعبة
+        function startGame() {
+            // إرسال رسالة أن اللعبة جاهزة
+            if (window.parent) {
+                window.parent.postMessage({
+                    type: 'webgl-game-ready',
+                    gameId: 'simple-runner'
+                }, '*');
+            }
+            
+            // بدء دورة اللعبة
+            setInterval(handleKeys, 1000/60);
+            gameLoop();
+        }
+
+        // بدء اللعبة عند تحميل الصفحة
+        window.onload = startGame;
+    </script>
+</body>
+</html>
